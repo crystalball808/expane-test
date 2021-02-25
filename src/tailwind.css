@@ -14001,6 +14001,10 @@ video {
   min-width: 0px;
 }
 
+.min-w-300 {
+  min-width: 300px;
+}
+
 .min-w-full {
   min-width: 100%;
 }
