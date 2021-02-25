@@ -47,7 +47,7 @@ export default function Table() {
         setIsModalAddClientOpen(true);
       }}>Add client</button>
       {status === 'loading' ? (
-        <p className="pl-3 text-3xl">loading...</p>
+        <p className="mt-8 pl-3 text-3xl">loading...</p>
       ) : status === 'error' ? (
         <span>Error</span>
       ) : (
