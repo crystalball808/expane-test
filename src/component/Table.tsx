@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { request, gql } from 'graphql-request';
 import ModalAddClient from './ModalAddClient';
+import ModalUpdateClient from './ModalUpdateClient'
 import { END_POINT } from '../utilities/endPoint'
 import { ClientType } from '../utilities/types'
 
 export default function Table() {
   const [isModalAddClientOpen, setIsModalAddClientOpen] = useState<Boolean>(false);
   const [isModalUpdateClientOpen, setIsModalUpdateClientOpen] = useState<Boolean>(false);
-  const [currentlyUpdatingClient, setCurrentlyUpdatingClient] = useState<ClientType | null>(null);
+  const [currentUpdatingClient, setCurrentUpdatingClient] = useState<ClientType | null>(null);
 
   const editClient = (client: ClientType) => {
-    setCurrentlyUpdatingClient(client);
+    setCurrentUpdatingClient(client);
     setIsModalUpdateClientOpen(true)
   }
 
@@ -40,11 +41,11 @@ export default function Table() {
 
   return (
     <>
-      <button className='min-w-full' onClick={() => {
+      <button className='min-w-full cursor-pointer text-lg font-medium bg-gray-300 text-gray-900 border-gray-300 border-2 border-solid hover:border-black' onClick={() => {
         setIsModalAddClientOpen(true);
       }}>Add client</button>
       {status === 'loading' ? (
-        'Loading'
+        <p className="pl-3 text-3xl">loading...</p>
       ) : status === 'error' ? (
         <span>Error</span>
       ) : (
@@ -73,7 +74,7 @@ export default function Table() {
                     <div className='flex-shrink-0 h-12 w-12'>
                       <img
                         className='h-12 w-12 rounded-full'
-                        src={client.avatarUrl}
+                        src={client.avatarUrl || "https://i.pinimg.com/236x/1d/16/51/1d1651093718c02665b19a7ae50db6aa.jpg"}
                         alt='avatar'
                       />
                     </div>
@@ -109,6 +110,7 @@ export default function Table() {
         </table>
       )}
       { isModalAddClientOpen ? (<ModalAddClient setIsModalOpen={setIsModalAddClientOpen} />) : (<></>)}
+      { isModalUpdateClientOpen ? (<ModalUpdateClient client={currentUpdatingClient} setIsModalOpen={setIsModalUpdateClientOpen} setCurrentUpdatingClient={setCurrentUpdatingClient} />) : (<></>) }
     </>
   );
 }

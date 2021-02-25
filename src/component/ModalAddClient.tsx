@@ -1,18 +1,15 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import {  useMutation, useQueryClient } from 'react-query';
-import { gql, GraphQLClient } from 'graphql-request';
+import { gql, request } from 'graphql-request';
+import Portal from './Portal'
 import { END_POINT } from '../utilities/endPoint';
+import { ModalAddClientProps } from '../utilities/types'
 
-type ModalAddClientProps = {
-  setIsModalOpen: Function;
-};
 
 export default function ModalAddClient({ setIsModalOpen }: ModalAddClientProps) {
   const { register, errors , handleSubmit } = useForm();
   const queryClient = useQueryClient();
-
-  const graphQlClient = new GraphQLClient(END_POINT);
 
   const addClientMutation = gql`
   mutation addClient ($firstName: String!, $lastName: String!, $phone: String, $avatarUrl: String!) {
@@ -26,7 +23,7 @@ export default function ModalAddClient({ setIsModalOpen }: ModalAddClientProps) 
 `;
 
 
-const mutation = useMutation(variables => graphQlClient.request(addClientMutation, variables),{
+const mutation = useMutation(variables => request(END_POINT,addClientMutation, variables),{
   onSuccess: () => {
     queryClient.invalidateQueries('clients');
   }
@@ -34,7 +31,6 @@ const mutation = useMutation(variables => graphQlClient.request(addClientMutatio
   
 
   const  addClient = async (variables: any) => {
-    console.log(variables);
     mutation.mutate(variables);
     setIsModalOpen(false);
   };
@@ -45,7 +41,7 @@ const mutation = useMutation(variables => graphQlClient.request(addClientMutatio
   };
 
   return (
-    <>
+    <Portal>
       <div className='flex items-center justify-center w-full h-full fixed top-0 left-0 bg-black bg-opacity-30'>
         <div>
           <button className="rounded px-2 cursor-pointer text-lg font-medium bg-gray-300 text-gray-900 border-gray-300 border-2 border-solid hover:border-black" onClick={closeModal}>Close</button>
@@ -72,6 +68,6 @@ const mutation = useMutation(variables => graphQlClient.request(addClientMutatio
           </form>
         </div>
       </div>
-    </>
+    </Portal>
   );
 }
