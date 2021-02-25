@@ -2,11 +2,18 @@ import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { request, gql } from 'graphql-request';
 import ModalAddClient from './ModalAddClient';
+import { END_POINT } from '../utilities/endPoint'
+import { ClientType } from '../utilities/types'
 
 export default function Table() {
-  const END_POINT = 'https://test-task.expane.pro/api/graphql';
+  const [isModalAddClientOpen, setIsModalAddClientOpen] = useState<Boolean>(false);
+  const [isModalUpdateClientOpen, setIsModalUpdateClientOpen] = useState<Boolean>(false);
+  const [currentlyUpdatingClient, setCurrentlyUpdatingClient] = useState<ClientType | null>(null);
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const editClient = (client: ClientType) => {
+    setCurrentlyUpdatingClient(client);
+    setIsModalUpdateClientOpen(true)
+  }
 
   const getClientsQuery = gql`
     {
@@ -29,18 +36,12 @@ export default function Table() {
 
   const { status, data } = useClients();
 
-  type ClientType = {
-    id: string;
-    firstName: string;
-    lastName: string;
-    phone: string;
-    avatarUrl: string;
-  };
+  
 
   return (
     <>
       <button className='min-w-full' onClick={() => {
-        setIsModalOpen(true);
+        setIsModalAddClientOpen(true);
       }}>Add client</button>
       {status === 'loading' ? (
         'Loading'
@@ -98,7 +99,7 @@ export default function Table() {
                     </div>
                 </td>
                 <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
-                  <button className='text-indigo-600 hover:text-indigo-900'>
+                  <button className='text-indigo-600 hover:text-indigo-900' onClick={()=>{editClient(client)}}>
                     Edit
                   </button>
                 </td>
@@ -107,7 +108,7 @@ export default function Table() {
           </tbody>
         </table>
       )}
-      { isModalOpen ? (<ModalAddClient setIsModalOpen={setIsModalOpen} />) : (<></>)}
+      { isModalAddClientOpen ? (<ModalAddClient setIsModalOpen={setIsModalAddClientOpen} />) : (<></>)}
     </>
   );
 }

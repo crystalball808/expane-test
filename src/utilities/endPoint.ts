@@ -1,0 +1,1 @@
+export const END_POINT = 'https://test-task.expane.pro/api/graphql';
