@@ -10,14 +10,15 @@ export default function Table() {
   const [isModalAddClientOpen, setIsModalAddClientOpen] = useState<Boolean>(false);
   const [isModalUpdateClientOpen, setIsModalUpdateClientOpen] = useState<Boolean>(false);
   const [currentUpdatingClient, setCurrentUpdatingClient] = useState<ClientType | null>(null);
-
+  
+  
   const editClient = (client: ClientType) => {
     setCurrentUpdatingClient(client);
     setIsModalUpdateClientOpen(true)
   }
 
   const getClientsQuery = gql`
-    {
+  {
       getClients {
         id
         firstName
@@ -26,22 +27,23 @@ export default function Table() {
         avatarUrl
       }
     }
-  `;
-
-  function useClients() {
-    return useQuery('clients', async () => {
-      const data = await request(END_POINT, getClientsQuery);
-      return data;
-    });
-  }
-
-  const { status, data } = useClients();
-
-  
-
-  return (
+    `;
+    function useClients() {
+        return useQuery('clients', async () => {
+          const data = await request(END_POINT, getClientsQuery);
+          return data;
+        });
+      }
+    const { status, data } = useClients();
+    
+    
+    
+    
+    
+    
+    return (
     <>
-      <button className='min-w-full cursor-pointer text-lg font-medium bg-gray-300 text-gray-900 border-gray-300 border-2 border-solid hover:border-black' onClick={() => {
+      <button className='fixed top-0 left-0 h-8 min-w-full cursor-pointer text-lg font-medium bg-gray-300 text-gray-900 border-gray-300 border-2 border-solid hover:border-black' onClick={() => {
         setIsModalAddClientOpen(true);
       }}>Add client</button>
       {status === 'loading' ? (
@@ -49,7 +51,7 @@ export default function Table() {
       ) : status === 'error' ? (
         <span>Error</span>
       ) : (
-        <table className='min-w-full m-0 divide-y divide-gray-200'>
+        <table className='min-w-full m-0 mt-8 divide-y divide-gray-200'>
           <thead className='bg-gray-50'>
             <tr>
               <th className='max-w-full px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
