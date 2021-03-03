@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { request, gql } from 'graphql-request';
-import ModalAddClient from './ModalAddClient';
-import ModalUpdateClient from './ModalUpdateClient'
+import ModalClient from './ModalClient'
 import { END_POINT } from '../utilities/endPoint'
 import { ClientType } from '../utilities/types'
 
 export default function Table() {
-  const [isModalAddClientOpen, setIsModalAddClientOpen] = useState<Boolean>(false);
-  const [isModalUpdateClientOpen, setIsModalUpdateClientOpen] = useState<Boolean>(false);
+  const [isModalClientOpen, setIsModalClientOpen] = useState<Boolean>(false);
   const [currentUpdatingClient, setCurrentUpdatingClient] = useState<ClientType | null>(null);
   
   
   const editClient = (client: ClientType) => {
     setCurrentUpdatingClient(client);
-    setIsModalUpdateClientOpen(true)
+    setIsModalClientOpen(true)
   }
 
   const getClientsQuery = gql`
@@ -44,7 +42,7 @@ export default function Table() {
     return (
     <>
       <button className='fixed top-0 left-0 h-8 min-w-full cursor-pointer text-lg font-medium bg-gray-300 text-gray-900 border-gray-300 border-2 border-solid hover:border-black' onClick={() => {
-        setIsModalAddClientOpen(true);
+        setIsModalClientOpen(true);
       }}>Add client</button>
       {status === 'loading' ? (
         <p className="mt-8 pl-3 text-3xl">loading...</p>
@@ -111,8 +109,7 @@ export default function Table() {
           </tbody>
         </table>
       )}
-      { isModalAddClientOpen ? (<ModalAddClient setIsModalOpen={setIsModalAddClientOpen} />) : (<></>)}
-      { isModalUpdateClientOpen ? (<ModalUpdateClient client={currentUpdatingClient} setIsModalOpen={setIsModalUpdateClientOpen} setCurrentUpdatingClient={setCurrentUpdatingClient} />) : (<></>) }
+      { isModalClientOpen ? (<ModalClient client={currentUpdatingClient} setIsModalOpen={setIsModalClientOpen} setCurrentUpdatingClient={setCurrentUpdatingClient} />) : (<></>) }
     </>
   );
 }

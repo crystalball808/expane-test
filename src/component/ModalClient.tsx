@@ -1,10 +1,7 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from 'react-query';
-import { gql, request } from 'graphql-request';
 import Portal from './Portal';
-import { END_POINT } from '../utilities/endPoint';
-import { ModalUpdateClientProps} from '../utilities/types';
+import { ModalUpdateClientProps } from '../utilities/types';
+import { useAddClient, useUpdateClient } from '../utilities/hooks';
 
 export default function ModalUpdateClient({
   client,
@@ -12,47 +9,22 @@ export default function ModalUpdateClient({
   setCurrentUpdatingClient,
 }: ModalUpdateClientProps) {
   const { register, errors, handleSubmit } = useForm();
-  const queryClient = useQueryClient();
 
-  const addClientMutation = gql`
-    mutation updateClient(
-      $id: ID!
-      $firstName: String!
-      $lastName: String!
-      $phone: String
-      $avatarUrl: String
-    ) {
-      updateClient(
-        id: $id
-        firstName: $firstName
-        lastName: $lastName
-        phone: $phone
-        avatarUrl: $avatarUrl
-      ) {
-        firstName
-        lastName
-        phone
-        avatarUrl
-      }
-    }
-  `;
-  const mutation = useMutation(
-    (variables) => request(END_POINT, addClientMutation, variables),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('clients');
-      },
-    }
-  );
+  const addClientMutation = useAddClient();
+  const updateClientMutation = useUpdateClient();
 
   const closeModal = () => {
     setCurrentUpdatingClient(null);
     setIsModalOpen(false);
   };
 
-  const updateClient = (variables: any) => {
-    mutation.mutate({...variables, id: client?.id});
-    setCurrentUpdatingClient(null)
+  const submitClient = (variables: any) => {
+    if (client && setCurrentUpdatingClient) {
+      updateClientMutation.mutate({ ...variables, id: client?.id });
+      setCurrentUpdatingClient(null);
+    } else {
+      addClientMutation.mutate(variables);
+    };
     setIsModalOpen(false);
   };
 
@@ -68,8 +40,8 @@ export default function ModalUpdateClient({
           </button>
           <form
             className='flex flex-col p-3 bg-gray-50 min-w-300 rounded'
-            onSubmit={handleSubmit(updateClient)}
-          > 
+            onSubmit={handleSubmit(submitClient)}
+          >
             <label className='text-xs font-medium text-gray-500 uppercase tracking-wider'>
               First name
               {errors.firstName && <p className='text-red-500'>is required</p>}
