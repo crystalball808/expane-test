@@ -8,9 +8,3 @@ export type NewClientType = {
 export type ClientType = NewClientType & {
     id: string;
 };
-
-export type ModalUpdateClientProps = {
-    client: ClientType | null,
-    setIsModalOpen: React.Dispatch<React.SetStateAction<Boolean>>,
-    setCurrentUpdatingClient: React.Dispatch<React.SetStateAction<ClientType | null>>
-}

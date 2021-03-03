@@ -1,13 +1,21 @@
 import { useForm } from 'react-hook-form';
 import Portal from './Portal';
-import { ModalUpdateClientProps } from '../utilities/types';
 import { useAddClient, useUpdateClient } from '../utilities/hooks';
+import { ClientType } from '../utilities/types';
+
+type ModalClientProps = {
+  client: ClientType | null;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<Boolean>>;
+  setCurrentUpdatingClient: React.Dispatch<
+    React.SetStateAction<ClientType | null>
+  >;
+};
 
 export default function ModalUpdateClient({
   client,
   setIsModalOpen,
   setCurrentUpdatingClient,
-}: ModalUpdateClientProps) {
+}: ModalClientProps) {
   const { register, errors, handleSubmit } = useForm();
 
   const addClientMutation = useAddClient();
@@ -24,22 +32,30 @@ export default function ModalUpdateClient({
       setCurrentUpdatingClient(null);
     } else {
       addClientMutation.mutate(variables);
-    };
+    }
     setIsModalOpen(false);
   };
 
   return (
     <Portal>
-      <div className='flex items-center justify-center w-full h-full fixed top-0 left-0 bg-black bg-opacity-30'>
-        <div>
-          <button
-            className='rounded px-2 cursor-pointer text-lg font-medium bg-gray-300 text-gray-900 border-gray-300 border-2 border-solid hover:border-black'
-            onClick={closeModal}
-          >
-            Close
-          </button>
+      <div
+        onClick={closeModal}
+        className='flex items-center justify-center w-full h-full fixed top-0 left-0 bg-black bg-opacity-50'
+      >
+        <div onClick={(e) => e.stopPropagation()} className='w-6/12'>
+          <div className='flex justify-between'>
+            <h1 className='text-white font-medium text-lg'>
+              {client ? 'Update' : 'Add'} client
+            </h1>
+            <button
+              className='rounded px-2 cursor-pointer text-lg font-medium bg-red-400 text-gray-900 border-red-400 border-2 border-solid hover:border-black'
+              onClick={closeModal}
+            >
+              Close
+            </button>
+          </div>
           <form
-            className='flex flex-col p-3 bg-gray-50 min-w-300 rounded'
+            className='flex flex-col p-3 bg-gray-50 rounded'
             onSubmit={handleSubmit(submitClient)}
           >
             <label className='text-xs font-medium text-gray-500 uppercase tracking-wider'>
@@ -47,7 +63,7 @@ export default function ModalUpdateClient({
               {errors.firstName && <p className='text-red-500'>is required</p>}
             </label>
             <input
-              className='border-b border-solid border-gray-300'
+              className='border-b border-solid border-indigo-400'
               name='firstName'
               type='text'
               defaultValue={client?.firstName}
@@ -58,7 +74,7 @@ export default function ModalUpdateClient({
               {errors.lastName && <p className='text-red-500'>is required</p>}
             </label>
             <input
-              className='border-b border-solid border-gray-300'
+              className='border-b border-solid border-indigo-400'
               name='lastName'
               type='text'
               defaultValue={client?.lastName}
@@ -68,7 +84,7 @@ export default function ModalUpdateClient({
               Phone
             </label>
             <input
-              className=' border-b border-solid border-gray-300'
+              className=' border-b border-solid border-indigo-400'
               name='phone'
               type='text'
               defaultValue={client?.phone}
@@ -78,14 +94,14 @@ export default function ModalUpdateClient({
               Avatar URL
             </label>
             <input
-              className='mb-1 border-b border-solid border-gray-300'
+              className='mb-1 border-b border-solid border-indigo-400'
               name='avatarUrl'
               type='text'
               defaultValue={client?.avatarUrl}
               ref={register}
             />
             <input
-              className='rounded-b cursor-pointer text-lg font-medium bg-gray-300 text-gray-900 border-gray-300 border-2 border-solid hover:border-black'
+              className='rounded-b cursor-pointer text-lg font-medium bg-indigo-500 text-white border-indigo-500 border-2 border-solid hover:border-black'
               type='submit'
             />
           </form>

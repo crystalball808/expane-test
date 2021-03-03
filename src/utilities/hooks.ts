@@ -1,6 +1,6 @@
 import { END_POINT } from './endPoint';
 import { gql, request } from 'graphql-request';
-import { useMutation, useQueryClient } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 
 export function useAddClient() {
   const queryClient = useQueryClient();
@@ -66,4 +66,22 @@ export function useUpdateClient() {
       },
     }
   );
+}
+
+export function useClients() {
+  const getClientsQuery = gql`
+    {
+      getClients {
+        id
+        firstName
+        lastName
+        phone
+        avatarUrl
+      }
+    }
+  `;
+  return useQuery('clients', async () => {
+    const data = await request(END_POINT, getClientsQuery);
+    return data;
+  });
 }
